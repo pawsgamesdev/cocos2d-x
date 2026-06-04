@@ -1,7 +1,9 @@
 apply plugin: 'com.android.library'
 
 android {
+    namespace "org.cocos2dx.lib"
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
+    buildToolsVersion PROP_BUILD_TOOLS_VERSION
 
     defaultConfig {
         minSdkVersion PROP_MIN_SDK_VERSION
@@ -19,11 +21,17 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles 'proguard-rules.pro'
         }
+
+        prerelease.initWith(buildTypes.release)
+    }
+    buildFeatures {
+        aidl true
     }
 }
 
 dependencies {
     implementation fileTree(dir: '../java/libs', include: ['*.jar'])
+    implementation 'com.getkeepsafe.relinker:relinker:1.4.5'
 }
