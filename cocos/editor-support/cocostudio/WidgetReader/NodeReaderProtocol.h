@@ -58,6 +58,41 @@ namespace cocostudio
                                                                                      flatbuffers::FlatBufferBuilder* builder) = 0;
         virtual void setPropsWithFlatBuffers(cocos2d::Node* node, const flatbuffers::Table* nodeOptions) = 0;
         virtual cocos2d::Node* createNodeWithFlatBuffers(const flatbuffers::Table* nodeOptions) = 0;
+
+        void setBasicSkin(std::string const& skin) { m_strSkinBasic = skin; }
+        void setActiveSkin(std::string const& skin) { m_strSkinActive = skin; }
+
+    protected:
+        bool _isNeedToReSkin() { return (!m_strSkinBasic.empty() && !m_strSkinActive.empty() && m_strSkinBasic != m_strSkinActive); }
+
+        std::string _reskinPath(std::string const& path, int resType)
+        {
+            if (!_isNeedToReSkin())
+                return path;
+
+            std::string retPath = path;
+            auto pos = retPath.find(m_strSkinBasic + '/');
+            if (pos != std::string::npos)
+            {
+                retPath.erase(pos, m_strSkinBasic.length());
+                retPath.insert(pos, m_strSkinActive);
+            }
+
+            if (resType == 1)
+            {
+                pos = retPath.find(m_strSkinBasic);
+                if (pos != std::string::npos)
+                {
+                    retPath.erase(pos, m_strSkinBasic.length());
+                    retPath.insert(pos, m_strSkinActive);
+                }
+            }
+
+            return (resType == 1 || cocos2d::FileUtils::getInstance()->isFileExist(retPath)) ? retPath : path;
+        }
+
+        std::string m_strSkinBasic;
+        std::string m_strSkinActive;
     };
 }
 

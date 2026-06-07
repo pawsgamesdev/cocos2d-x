@@ -92,6 +92,10 @@ public:
     * @lua NA
     */
     virtual void applicationWillEnterForeground() = 0;
+	
+	virtual void applicationWillResignActive() = 0;
+	
+	virtual void applicationDidBecomeActive() = 0;
 
     /**
     * @brief    Callback by Director for limit FPS.

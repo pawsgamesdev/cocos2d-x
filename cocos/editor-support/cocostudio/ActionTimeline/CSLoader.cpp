@@ -192,6 +192,18 @@ void CSLoader::destroyInstance()
     ActionTimelineCache::destroyInstance();
 }
 
+void CSLoader::setBasicSkin(std::string const& skin)
+{
+    SpriteReader::getInstance()->setBasicSkin(skin);
+    ButtonReader::getInstance()->setBasicSkin(skin);
+}
+
+void CSLoader::setActiveSkin(std::string const& skin)
+{
+    SpriteReader::getInstance()->setActiveSkin(skin);
+    ButtonReader::getInstance()->setActiveSkin(skin);
+}
+
 CSLoader::CSLoader()
 : _recordJsonPath(true)
 , _jsonPath("")

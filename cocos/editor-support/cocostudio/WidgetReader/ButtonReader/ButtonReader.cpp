@@ -690,6 +690,9 @@ namespace cocostudio
         auto normalDic = options->normalData();
         int normalType = normalDic->resourceType();
         std::string normalTexturePath = normalDic->path()->c_str();
+  		if (_isNeedToReSkin())
+  		    normalTexturePath = _reskinPath(normalTexturePath, normalType);
+
         switch (normalType)
         {
             case 0:
@@ -712,6 +715,9 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = normalDic->plistFile()->c_str();
+   				if (_isNeedToReSkin())
+   				    plist = _reskinPath(plist, normalType);
+
                 SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(normalTexturePath);
                 if (spriteFrame)
                 {
@@ -751,6 +757,9 @@ namespace cocostudio
         auto pressedDic = options->pressedData();
         int pressedType = pressedDic->resourceType();
         std::string pressedTexturePath = pressedDic->path()->c_str();
+   		if (_isNeedToReSkin())
+            pressedTexturePath = _reskinPath(pressedTexturePath, pressedType);
+
         switch (pressedType)
         {
             case 0:
@@ -770,6 +779,9 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = pressedDic->plistFile()->c_str();
+        		if (_isNeedToReSkin())
+        		    plist = _reskinPath(plist, pressedType);
+
                 SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(pressedTexturePath);
                 if (spriteFrame)
                 {
@@ -809,6 +821,9 @@ namespace cocostudio
         auto disabledDic = options->disabledData();
         int disabledType = disabledDic->resourceType();
         std::string disabledTexturePath = disabledDic->path()->c_str();
+   		if (_isNeedToReSkin())
+  		    disabledTexturePath = _reskinPath(disabledTexturePath, disabledType);
+
         switch (disabledType)
         {
             case 0:
@@ -828,6 +843,9 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = disabledDic->plistFile()->c_str();
+				if (_isNeedToReSkin())
+        		    plist = _reskinPath(plist, disabledType);
+
                 SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(disabledTexturePath);
                 if (spriteFrame)
                 {

@@ -699,6 +699,20 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     return Status::OK;
 }
 
+unsigned char* FileUtils::getFileData(const std::string& filename, const char* mode, ssize_t *size) const
+{
+	CCASSERT(!filename.empty() && size != nullptr && mode != nullptr, "Invalid parameters");
+	(void)(mode);
+	
+	Data d;
+	if (getContents(filename, &d) != Status::OK) {
+		*size = 0;
+		return nullptr;
+	}
+	
+	return d.takeBuffer(size);
+}
+
 unsigned char* FileUtils::getFileDataFromZip(const std::string& zipFilePath, const std::string& filename, ssize_t *size) const
 {
     unsigned char * buffer = nullptr;
@@ -713,7 +727,11 @@ unsigned char* FileUtils::getFileDataFromZip(const std::string& zipFilePath, con
         CC_BREAK_IF(!file);
 
         // minizip 1.2.0 is same with other platforms
+#ifdef MINIZIP_FROM_SYSTEM		
         int ret = unzLocateFile(file, filename.c_str(), nullptr);
+#else
+		int ret = unzLocateFile(file, filename.c_str(), 1);
+#endif
 
         CC_BREAK_IF(UNZ_OK != ret);
 

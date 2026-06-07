@@ -181,7 +181,8 @@ namespace cocostudio
         
         int resourceType = fileNameData->resourceType();
         std::string path = fileNameData->path()->c_str();
-        
+    	if (_isNeedToReSkin())
+    		path = _reskinPath(path, resourceType);        
         std::string errorFilePath = "";
         
         switch (resourceType)
@@ -202,6 +203,8 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = fileNameData->plistFile()->c_str();
+        		if (_isNeedToReSkin())
+        			plist = _reskinPath(plist, resourceType);
                 SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(path);
                 if (spriteFrame)
                 {

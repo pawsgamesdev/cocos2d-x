@@ -267,6 +267,8 @@ public:
         return getContents(filename, &buf);
     }
     virtual Status getContents(const std::string& filename, ResizableBuffer* buffer) const;
+	
+	virtual unsigned char* getFileData(const std::string& filename, const char* mode, ssize_t *size) const;
 
     /**
      *  Gets resource file data from a zip file.

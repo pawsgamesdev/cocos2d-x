@@ -99,6 +99,8 @@ public:
         return _startupScriptFilename;
     }
 
+    virtual void applicationScreenSizeChanged(int newWidth, int newHeight);
+
 protected:
     HINSTANCE           _instance;
     HACCEL              _accelTable;

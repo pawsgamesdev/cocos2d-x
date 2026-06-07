@@ -27,8 +27,7 @@ THE SOFTWARE.
 
 #ifndef __MINGW32__
 
-NS_CC_BEGIN
-
+// Definition at global scope to match the declaration in CCStdC-win32.h.
 int gettimeofday(struct timeval * val, struct timezone *)
 {
     if (val)
@@ -41,7 +40,5 @@ int gettimeofday(struct timeval * val, struct timezone *)
     }
     return 0;
 }
-
-NS_CC_END
 
 #endif // __MINGW32__

@@ -120,6 +120,9 @@ public:
     cocos2d::Node* createNodeWithFlatBuffersForSimulator(const std::string& filename);
     cocos2d::Node* nodeWithFlatBuffersForSimulator(const flatbuffers::NodeTree* nodetree);
 
+    void setBasicSkin(std::string const& skin);
+    void setActiveSkin(std::string const& skin);
+
 protected:
 
     cocos2d::Node* createNodeWithFlatBuffersFile(const std::string& filename, const ccNodeLoadCallback& callback);

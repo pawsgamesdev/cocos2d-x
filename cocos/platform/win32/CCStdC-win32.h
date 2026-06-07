@@ -99,8 +99,8 @@ typedef SSIZE_T ssize_t;
 // Structure timeval has define in winsock.h, include windows.h for it.
 #include <Windows.h>
 
-NS_CC_BEGIN
-
+// gettimeofday/timezone are POSIX shims — keep them at global scope to avoid
+// namespace cocos2d { } wrapper conflicting with Windows SDK macros on MSVC.
 struct timezone
 {
     int tz_minuteswest;
@@ -108,8 +108,6 @@ struct timezone
 };
 
 int CC_DLL gettimeofday(struct timeval *, struct timezone *);
-
-NS_CC_END
 
 #else
 
