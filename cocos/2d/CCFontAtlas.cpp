@@ -126,7 +126,7 @@ FontAtlas::~FontAtlas()
 
     delete []_currentPageData;
 
-#if CC_TARGET_PLATFORM != CC_PLATFORM_WIN32 && CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
+#if CC_TARGET_PLATFORM != CC_PLATFORM_WIN32 && CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID && CC_TARGET_PLATFORM != CC_PLATFORM_IOS
     if (_iconv)
     {
         iconv_close(_iconv);
@@ -245,6 +245,8 @@ void FontAtlas::conversionU32TOGB2312(const std::u32string& u32Text, std::unorde
         WideCharToMultiByte(936, NULL, (LPCWCH)u16Text.c_str(), strLen, (LPSTR)gb2312Text, gb2312StrSize, NULL, NULL);
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
         conversionEncodingJNI((char*)u32Text.c_str(), gb2312StrSize, "UTF-32LE", gb2312Text, "GB2312");
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+        // cocos 4.0 no implementations TODO:
 #else
         if (_iconv == nullptr)
         {

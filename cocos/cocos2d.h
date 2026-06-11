@@ -184,6 +184,7 @@ THE SOFTWARE.
     #include "platform/ios/CCApplication-ios.h"
     #include "platform/ios/CCGLViewImpl-ios.h"
     #include "platform/ios/CCStdC-ios.h"
+    #include "platform/CCGL.h"  // GL type aliases (GLubyte/GLfloat/etc.) — Metal backend, no OpenGL ES framework
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)

@@ -36,6 +36,30 @@ THE SOFTWARE.
 #include "platform/win32/CCGL-win32.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "platform/linux/CCGL-linux.h"
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+// cocos2d-x 4.0 uses Metal on Apple platforms — the OpenGL ES / OpenGL
+// frameworks are not needed.  These typedef aliases are still referenced by
+// legacy vertex-data code (e.g. GLubyte for opacity, GLfloat for trig,
+// GLushort for index buffers); they map 1-to-1 to standard C types.
+#include <stdint.h>
+#include <stddef.h>
+typedef void             GLvoid;
+typedef unsigned char    GLboolean;
+typedef unsigned char    GLubyte;
+typedef signed char      GLbyte;
+typedef unsigned short   GLushort;
+typedef short            GLshort;
+typedef unsigned int     GLuint;
+typedef int              GLint;
+typedef unsigned int     GLenum;
+typedef unsigned int     GLbitfield;
+typedef int              GLsizei;
+typedef float            GLfloat;
+typedef float            GLclampf;
+typedef double           GLdouble;
+typedef double           GLclampd;
+typedef ptrdiff_t        GLintptr;
+typedef ptrdiff_t        GLsizeiptr;
 #endif
 
 /// @endcond

@@ -134,3 +134,13 @@ set_target_properties(external
     FOLDER "External"
 )
 
+if(MACOSX OR IOS)
+    add_subdirectory(glsl-optimizer)
+    target_link_libraries(external 
+    ext_glcpp_library
+    ext_glsl_optimizer
+    ext_libmesa
+    )
+endif()
+
+
