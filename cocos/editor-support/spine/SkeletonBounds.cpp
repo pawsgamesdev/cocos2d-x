@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2019, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -15,27 +15,23 @@
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
  *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
+ * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
-
-#ifdef SPINE_UE4
-#include "SpinePluginPrivatePCH.h"
-#endif
 
 #include <spine/SkeletonBounds.h>
 
-#include <spine/Skeleton.h>
 #include <spine/Bone.h>
 #include <spine/BoundingBoxAttachment.h>
+#include <spine/Skeleton.h>
 
 #include <spine/Slot.h>
 
@@ -46,13 +42,19 @@ using namespace spine;
 SkeletonBounds::SkeletonBounds() : _minX(0), _minY(0), _maxX(0), _maxY(0) {
 }
 
+SkeletonBounds::~SkeletonBounds() {
+	for (size_t i = 0, n = _polygons.size(); i < n; i++)
+		_polygonPool.free(_polygons[i]);
+	_polygons.clear();
+}
+
 void SkeletonBounds::update(Skeleton &skeleton, bool updateAabb) {
-	Vector<Slot *> &slots = skeleton._slots;
+	Vector<Slot *> &slots = skeleton.getSlots();
 	size_t slotCount = slots.size();
 
 	_boundingBoxes.clear();
 	for (size_t i = 0, n = _polygons.size(); i < n; ++i) {
-		_polygonPool.add(_polygons[i]);
+		_polygonPool.free(_polygons[i]);
 	}
 
 	_polygons.clear();
@@ -66,20 +68,13 @@ void SkeletonBounds::update(Skeleton &skeleton, bool updateAabb) {
 		BoundingBoxAttachment *boundingBox = static_cast<BoundingBoxAttachment *>(attachment);
 		_boundingBoxes.add(boundingBox);
 
-		Polygon *polygonP = NULL;
-		size_t poolCount = _polygonPool.size();
-		if (poolCount > 0) {
-			polygonP = _polygonPool[poolCount - 1];
-			_polygonPool.removeAt(poolCount - 1);
-		} else
-			polygonP = new(__FILE__, __LINE__) Polygon();
-
+		spine::Polygon *polygonP = _polygonPool.obtain();
 		_polygons.add(polygonP);
 
 		Polygon &polygon = *polygonP;
 
 		size_t count = boundingBox->getWorldVerticesLength();
-		polygon._count = count;
+		polygon._count = (int) count;
 		if (polygon._vertices.size() < count) {
 			polygon._vertices.setSize(count, 0);
 		}
@@ -123,7 +118,7 @@ bool SkeletonBounds::aabbintersectsSegment(float x1, float y1, float x2, float y
 	return false;
 }
 
-bool SkeletonBounds::aabbIntersectsSkeleton(SkeletonBounds bounds) {
+bool SkeletonBounds::aabbIntersectsSkeleton(SkeletonBounds &bounds) {
 	return _minX < bounds._maxX && _maxX > bounds._minX && _minY < bounds._maxY && _maxY > bounds._minY;
 }
 
@@ -190,6 +185,19 @@ spine::Polygon *SkeletonBounds::getPolygon(BoundingBoxAttachment *attachment) {
 	return index == -1 ? NULL : _polygons[index];
 }
 
+BoundingBoxAttachment *SkeletonBounds::getBoundingBox(Polygon *polygon) {
+	int index = _polygons.indexOf(polygon);
+	return index == -1 ? NULL : _boundingBoxes[index];
+}
+
+Vector<spine::Polygon *> &SkeletonBounds::getPolygons() {
+	return _polygons;
+}
+
+Vector<BoundingBoxAttachment *> &SkeletonBounds::getBoundingBoxes() {
+	return _boundingBoxes;
+}
+
 float SkeletonBounds::getWidth() {
 	return _maxX - _minX;
 }
@@ -199,13 +207,13 @@ float SkeletonBounds::getHeight() {
 }
 
 void SkeletonBounds::aabbCompute() {
-	float minX = FLT_MIN;
-	float minY = FLT_MIN;
-	float maxX = FLT_MAX;
-	float maxY = FLT_MAX;
+	float minX = FLT_MAX;
+	float minY = FLT_MAX;
+	float maxX = FLT_MIN;
+	float maxY = FLT_MIN;
 
 	for (size_t i = 0, n = _polygons.size(); i < n; ++i) {
-		Polygon *polygon = _polygons[i];
+		spine::Polygon *polygon = _polygons[i];
 		Vector<float> &vertices = polygon->_vertices;
 		for (int ii = 0, nn = polygon->_count; ii < nn; ii += 2) {
 			float x = vertices[ii];

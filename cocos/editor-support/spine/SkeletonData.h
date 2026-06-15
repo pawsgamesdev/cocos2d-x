@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2019, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -15,16 +15,16 @@
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
  *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
+ * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #ifndef Spine_SkeletonData_h
@@ -34,158 +34,162 @@
 #include <spine/SpineString.h>
 
 namespace spine {
-class BoneData;
+	class BoneData;
 
-class SlotData;
+	class SlotData;
 
-class Skin;
+	class Skin;
 
-class EventData;
+	class EventData;
 
-class Animation;
+	class Animation;
 
-class IkConstraintData;
+	class IkConstraintData;
 
-class TransformConstraintData;
+	class TransformConstraintData;
 
-class PathConstraintData;
+	class PathConstraintData;
+
+    class PhysicsConstraintData;
 
 /// Stores the setup pose and all of the stateless data for a skeleton.
-class SP_API SkeletonData : public SpineObject {
-	friend class SkeletonBinary;
+	class SP_API SkeletonData : public SpineObject {
+		friend class SkeletonBinary;
 
-	friend class SkeletonJson;
+		friend class SkeletonJson;
 
-	friend class Skeleton;
+		friend class Skeleton;
 
-public:
-	SkeletonData();
+	public:
+		SkeletonData();
 
-	~SkeletonData();
+		~SkeletonData();
 
-	/// Finds a bone by comparing each bone's name.
-	/// It is more efficient to cache the results of this method than to call it multiple times.
-	/// @return May be NULL.
-	BoneData *findBone(const String &boneName);
+		/// Finds a bone by comparing each bone's name.
+		/// It is more efficient to cache the results of this method than to call it multiple times.
+		/// @return May be NULL.
+		BoneData *findBone(const String &boneName);
 
-	/// @return -1 if the bone was not found.
-	int findBoneIndex(const String &boneName);
+		/// @return May be NULL.
+		SlotData *findSlot(const String &slotName);
 
-	/// @return May be NULL.
-	SlotData *findSlot(const String &slotName);
+		/// @return May be NULL.
+		Skin *findSkin(const String &skinName);
 
-	/// @return -1 if the slot was not found.
-	int findSlotIndex(const String &slotName);
+		/// @return May be NULL.
+		spine::EventData *findEvent(const String &eventDataName);
 
-	/// @return May be NULL.
-	Skin *findSkin(const String &skinName);
+		/// @return May be NULL.
+		Animation *findAnimation(const String &animationName);
 
-	/// @return May be NULL.
-	spine::EventData *findEvent(const String &eventDataName);
+		/// @return May be NULL.
+		IkConstraintData *findIkConstraint(const String &constraintName);
 
-	/// @return May be NULL.
-	Animation *findAnimation(const String &animationName);
+		/// @return May be NULL.
+		TransformConstraintData *findTransformConstraint(const String &constraintName);
 
-	/// @return May be NULL.
-	IkConstraintData *findIkConstraint(const String &constraintName);
+		/// @return May be NULL.
+		PathConstraintData *findPathConstraint(const String &constraintName);
 
-	/// @return May be NULL.
-	TransformConstraintData *findTransformConstraint(const String &constraintName);
+        /// @return May be NULL.
+        PhysicsConstraintData *findPhysicsConstraint(const String &constraintName);
 
-	/// @return May be NULL.
-	PathConstraintData *findPathConstraint(const String &constraintName);
+		const String &getName();
 
-	/// @return -1 if the path constraint was not found.
-	int findPathConstraintIndex(const String &pathConstraintName);
+		void setName(const String &inValue);
 
-	const String &getName();
+		/// The skeleton's bones, sorted parent first. The root bone is always the first bone.
+		Vector<BoneData *> &getBones();
 
-	void setName(const String &inValue);
+		Vector<SlotData *> &getSlots();
 
-	/// The skeleton's bones, sorted parent first. The root bone is always the first bone.
-	Vector<BoneData *> &getBones();
+		/// All skins, including the default skin.
+		Vector<Skin *> &getSkins();
 
-	Vector<SlotData *> &getSlots();
+		/// The skeleton's default skin.
+		/// By default this skin contains all attachments that were not in a skin in Spine.
+		/// @return May be NULL.
+		Skin *getDefaultSkin();
 
-	/// All skins, including the default skin.
-	Vector<Skin *> &getSkins();
+		void setDefaultSkin(Skin *inValue);
 
-	/// The skeleton's default skin.
-	/// By default this skin contains all attachments that were not in a skin in Spine.
-	/// @return May be NULL.
-	Skin *getDefaultSkin();
+		Vector<spine::EventData *> &getEvents();
 
-	void setDefaultSkin(Skin *inValue);
+		Vector<Animation *> &getAnimations();
 
-	Vector<spine::EventData *> &getEvents();
+		Vector<IkConstraintData *> &getIkConstraints();
 
-	Vector<Animation *> &getAnimations();
+		Vector<TransformConstraintData *> &getTransformConstraints();
 
-	Vector<IkConstraintData *> &getIkConstraints();
+		Vector<PathConstraintData *> &getPathConstraints();
 
-	Vector<TransformConstraintData *> &getTransformConstraints();
+        Vector<PhysicsConstraintData *> &getPhysicsConstraints();
 
-	Vector<PathConstraintData *> &getPathConstraints();
+		float getX();
 
-	float getX();
+		void setX(float inValue);
 
-	void setX(float inValue);
+		float getY();
 
-	float getY();
+		void setY(float inValue);
 
-	void setY(float inValue);
+		float getWidth();
 
-	float getWidth();
+		void setWidth(float inValue);
 
-	void setWidth(float inValue);
+		float getHeight();
 
-	float getHeight();
+		void setHeight(float inValue);
 
-	void setHeight(float inValue);
+        float getReferenceScale();
 
-	/// The Spine version used to export this data, or NULL.
-	const String &getVersion();
+        void setReferenceScale(float inValue);
 
-	void setVersion(const String &inValue);
+		/// The Spine version used to export this data, or NULL.
+		const String &getVersion();
 
-	const String &getHash();
+		void setVersion(const String &inValue);
 
-	void setHash(const String &inValue);
+		const String &getHash();
 
-	const String &getImagesPath();
+		void setHash(const String &inValue);
 
-	void setImagesPath(const String &inValue);
+		const String &getImagesPath();
 
-	const String &getAudioPath();
+		void setImagesPath(const String &inValue);
 
-	void setAudioPath(const String &inValue);
+		const String &getAudioPath();
 
-	/// The dopesheet FPS in Spine. Available only when nonessential data was exported.
-	float getFps();
+		void setAudioPath(const String &inValue);
 
-	void setFps(float inValue);
+		/// The dopesheet FPS in Spine. Available only when nonessential data was exported.
+		float getFps();
 
-private:
-	String _name;
-	Vector<BoneData *> _bones; // Ordered parents first
-	Vector<SlotData *> _slots; // Setup pose draw order.
-	Vector<Skin *> _skins;
-	Skin *_defaultSkin;
-	Vector<EventData *> _events;
-	Vector<Animation *> _animations;
-	Vector<IkConstraintData *> _ikConstraints;
-	Vector<TransformConstraintData *> _transformConstraints;
-	Vector<PathConstraintData *> _pathConstraints;
-	float _x, _y, _width, _height;
-	String _version;
-	String _hash;
-	Vector<char*> _strings;
+		void setFps(float inValue);
 
-	// Nonessential.
-	float _fps;
-	String _imagesPath;
-	String _audioPath;
-};
+	private:
+		String _name;
+		Vector<BoneData *> _bones; // Ordered parents first
+		Vector<SlotData *> _slots; // Setup pose draw order.
+		Vector<Skin *> _skins;
+		Skin *_defaultSkin;
+		Vector<EventData *> _events;
+		Vector<Animation *> _animations;
+		Vector<IkConstraintData *> _ikConstraints;
+		Vector<TransformConstraintData *> _transformConstraints;
+		Vector<PathConstraintData *> _pathConstraints;
+        Vector<PhysicsConstraintData *> _physicsConstraints;
+		float _x, _y, _width, _height;
+        float _referenceScale;
+		String _version;
+		String _hash;
+		Vector<char *> _strings;
+
+		// Nonessential.
+		float _fps;
+		String _imagesPath;
+		String _audioPath;
+	};
 }
 
 #endif /* Spine_SkeletonData_h */

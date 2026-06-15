@@ -1,8 +1,8 @@
 /******************************************************************************
  * Spine Runtimes License Agreement
- * Last updated May 1, 2019. Replaces all prior versions.
+ * Last updated April 5, 2025. Replaces all prior versions.
  *
- * Copyright (c) 2013-2019, Esoteric Software LLC
+ * Copyright (c) 2013-2025, Esoteric Software LLC
  *
  * Integration of the Spine Runtimes into software or otherwise creating
  * derivative works of the Spine Runtimes is permitted under the terms and
@@ -15,16 +15,16 @@
  * Spine Editor license and redistribution of the Products in any form must
  * include this license and copyright notice.
  *
- * THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY EXPRESS
- * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
- * NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, BUSINESS
- * INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THE SPINE RUNTIMES ARE PROVIDED BY ESOTERIC SOFTWARE LLC "AS IS" AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE LLC BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES,
+ * BUSINESS INTERRUPTION, OR LOSS OF USE, DATA, OR PROFITS) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
 #ifndef SPINE_SPINE_H_
@@ -55,11 +55,13 @@
 #include <spine/EventData.h>
 #include <spine/EventTimeline.h>
 #include <spine/Extension.h>
-#include <spine/HashMap.h>
 #include <spine/HasRendererObject.h>
+#include <spine/HashMap.h>
 #include <spine/IkConstraint.h>
 #include <spine/IkConstraintData.h>
 #include <spine/IkConstraintTimeline.h>
+#include <spine/Inherit.h>
+#include <spine/InheritTimeline.h>
 #include <spine/Json.h>
 #include <spine/LinkedMesh.h>
 #include <spine/MathUtil.h>
@@ -72,13 +74,17 @@
 #include <spine/PathConstraintMixTimeline.h>
 #include <spine/PathConstraintPositionTimeline.h>
 #include <spine/PathConstraintSpacingTimeline.h>
+#include <spine/Physics.h>
+#include <spine/PhysicsConstraint.h>
+#include <spine/PhysicsConstraintData.h>
 #include <spine/PointAttachment.h>
 #include <spine/Pool.h>
 #include <spine/PositionMode.h>
+#include <spine/Property.h>
+#include <spine/RTTI.h>
 #include <spine/RegionAttachment.h>
 #include <spine/RotateMode.h>
 #include <spine/RotateTimeline.h>
-#include <spine/RTTI.h>
 #include <spine/ScaleTimeline.h>
 #include <spine/ShearTimeline.h>
 #include <spine/Skeleton.h>
@@ -87,6 +93,7 @@
 #include <spine/SkeletonClipping.h>
 #include <spine/SkeletonData.h>
 #include <spine/SkeletonJson.h>
+#include <spine/SkeletonRenderer.h>
 #include <spine/Skin.h>
 #include <spine/Slot.h>
 #include <spine/SlotData.h>
@@ -95,18 +102,14 @@
 #include <spine/SpineString.h>
 #include <spine/TextureLoader.h>
 #include <spine/Timeline.h>
-#include <spine/TimelineType.h>
 #include <spine/TransformConstraint.h>
 #include <spine/TransformConstraintData.h>
 #include <spine/TransformConstraintTimeline.h>
-#include <spine/TransformMode.h>
 #include <spine/TranslateTimeline.h>
 #include <spine/Triangulator.h>
-#include <spine/TwoColorTimeline.h>
 #include <spine/Updatable.h>
 #include <spine/Vector.h>
 #include <spine/VertexAttachment.h>
-#include <spine/VertexEffect.h>
 #include <spine/Vertices.h>
 
 #endif
