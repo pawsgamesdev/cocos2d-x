@@ -170,6 +170,8 @@ public:
      */
     void setBackGroundImage(const std::string& fileName,TextureResType texType = TextureResType::LOCAL);
     
+	Scale9Sprite* getBackGroundImage() const { return _backGroundImage; }
+
     /**
      * Sets a background image capinsets for layout, it only affects the scale9 enabled background image
      *
