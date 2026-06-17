@@ -32,6 +32,7 @@ NS_CC_BEGIN
 namespace ui {
 
 static const int LABEL_RENDERER_Z = (-1);
+static std::string _customFontName = "";
 
 IMPLEMENT_CLASS_GUI_INFO(Text)
 
@@ -153,26 +154,34 @@ float Text::getFontSize()const
     return _fontSize;
 }
 
+void Text::setCustomFontName(const std::string& name)
+{
+    _customFontName = name;
+}
+
 void Text::setFontName(const std::string& name)
 {
-    if(FileUtils::getInstance()->isFileExist(name))
+    const std::string fontName = _customFontName.empty() ?
+        name : _customFontName;
+
+    if (FileUtils::getInstance()->isFileExist(fontName))
     {
         TTFConfig config = _labelRenderer->getTTFConfig();
-        config.fontFilePath = name;
+        config.fontFilePath = fontName;
         config.fontSize = _fontSize;
         _labelRenderer->setTTFConfig(config);
         _type = Type::TTF;
     }
     else
     {
-        _labelRenderer->setSystemFontName(name);
+        _labelRenderer->setSystemFontName(fontName);
         if (_type == Type::TTF)
         {
             _labelRenderer->requestSystemFontRefresh();
         }
         _type = Type::SYSTEM;
     }
-    _fontName = name;
+    _fontName = fontName;
     updateContentSizeWithTextureSize(_labelRenderer->getContentSize());
     _labelRendererAdaptDirty = true;
 }

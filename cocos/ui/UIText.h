@@ -138,6 +138,12 @@ public:
     float getFontSize()const;
 
     /**
+     * Set custom font name
+     * @param name String value
+     */
+    static void setCustomFontName(const std::string& name);
+
+    /**
      * Sets the font name of label.
      *  If you are trying to use a system font, you could just pass a font name
      * If you are trying to use a TTF, you should pass a file path to the TTF file

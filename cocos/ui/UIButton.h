@@ -238,6 +238,12 @@ public:
     float getTitleFontSize() const;
 
     /**
+     * Set custom font name
+     * @param name String value
+     */
+    static void setCustomFontName(const std::string& name);
+
+    /**
      * Change the font name of button's title
      *@param fontName a font name string.
      */
