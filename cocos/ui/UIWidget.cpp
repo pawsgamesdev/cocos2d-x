@@ -164,11 +164,32 @@ _layoutParameterType(LayoutParameter::Type::NONE),
 _focused(false),
 _focusEnabled(true),
 _touchEventListener(nullptr),
+_touchEventSelector(nullptr),
 _ccEventCallback(nullptr),
 _callbackType(""),
 _callbackName("")
 {
 
+}
+
+Widget::ccWidgetIsTapAllowCallback Widget::_tapAllowClb;
+
+bool Widget::isTapAllow(Widget* wgt)
+{
+    if (_tapAllowClb)
+        return _tapAllowClb(wgt);
+
+    return true;
+}
+
+void Widget::setIsTapAllowCallback(ccWidgetIsTapAllowCallback const& clb)
+{
+    _tapAllowClb = clb;
+}
+
+void Widget::removeIsTapAllowCallback()
+{
+    _tapAllowClb = nullptr;
 }
 
 Widget::~Widget()
@@ -769,7 +790,7 @@ bool Widget::onTouchBegan(Touch *touch, Event* /*unusedEvent*/)
         {
             if (isClippingParentContainsPoint(_touchBeganPosition)) {
                 _hittedByCamera = camera;
-                _hitted = true;
+                _hitted = Widget::isTapAllow(this);
             }
         }
     }
@@ -866,6 +887,10 @@ void Widget::pushDownEvent()
         _touchEventCallback(this, TouchEventType::BEGAN);
     }
 
+    if (_touchEventListener && _touchEventSelector)
+    {
+        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_BEGAN);
+    }
     this->release();
 }
 
@@ -877,6 +902,10 @@ void Widget::moveEvent()
         _touchEventCallback(this, TouchEventType::MOVED);
     }
 
+    if (_touchEventListener && _touchEventSelector)
+    {
+        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_MOVED);
+    }
     this->release();
 }
 
@@ -894,6 +923,11 @@ void Widget::releaseUpEvent()
         _touchEventCallback(this, TouchEventType::ENDED);
     }
 
+    if (_touchEventListener && _touchEventSelector)
+    {
+        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_ENDED);
+    }
+
     if (_clickEventListener) {
         _clickEventListener(this);
     }
@@ -908,7 +942,17 @@ void Widget::cancelUpEvent()
         _touchEventCallback(this, TouchEventType::CANCELED);
     }
 
+    if (_touchEventListener && _touchEventSelector)
+    {
+        (_touchEventListener->*_touchEventSelector)(this,TOUCH_EVENT_CANCELED);
+    }
     this->release();
+}
+
+void Widget::addTouchEventListener(Ref *target, SEL_TouchEvent selector)
+{
+    _touchEventListener = target;
+    _touchEventSelector = selector;
 }
 
 void Widget::addTouchEventListener(const ccWidgetTouchCallback& callback)
@@ -1202,6 +1246,7 @@ void Widget::copyProperties(Widget *widget)
     setCascadeOpacityEnabled(widget->isCascadeOpacityEnabled());
     _touchEventCallback = widget->_touchEventCallback;
     _touchEventListener = widget->_touchEventListener;
+    _touchEventSelector = widget->_touchEventSelector;
     _clickEventListener = widget->_clickEventListener;
     _focused = widget->_focused;
     _focusEnabled = widget->_focusEnabled;

@@ -45,11 +45,22 @@ class Camera;
 namespace ui {
     class LayoutComponent;
 
+typedef enum
+{
+    TOUCH_EVENT_BEGAN,
+    TOUCH_EVENT_MOVED,
+    TOUCH_EVENT_ENDED,
+    TOUCH_EVENT_CANCELED
+}TouchEventType;
+    
 /**
- *@brief Base class for all ui widgets.
- * This class inherent from `ProtectedNode` and `LayoutParameterProtocol`.
- * If you want to implements your own ui widget, you should subclass it.
+ * Touch event callback.
+ *@deprecated use `Widget::ccWidgetTouchCallback` instead
  */
+typedef void (Ref::*SEL_TouchEvent)(Ref*,TouchEventType);
+#define toucheventselector(_SELECTOR) (SEL_TouchEvent)(&_SELECTOR)
+
+
 class CC_GUI_DLL Widget : public ProtectedNode, public LayoutParameterProtocol
 {
 public:
@@ -135,6 +146,11 @@ public:
      */
     Widget();
     
+	typedef std::function<bool(Ref*)> ccWidgetIsTapAllowCallback;
+
+    static bool isTapAllow(Widget* wgt);
+	static void setIsTapAllowCallback(ccWidgetIsTapAllowCallback const& clb);
+	static void removeIsTapAllowCallback();
     /**
      * Default destructor
      * @js NA
@@ -252,6 +268,10 @@ public:
      */
     virtual void visit(cocos2d::Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
 
+    /**
+     * Sets the touch event target/selector to the widget
+     */
+    CC_DEPRECATED_ATTRIBUTE void addTouchEventListener(Ref* target,SEL_TouchEvent selector);
     /**
      * Set a callback to touch vent listener.
      *@param callback  The callback in `ccWidgetEventCallback.`
@@ -792,6 +812,8 @@ protected:
     LayoutComponent* getOrCreateLayoutComponent();
 
 protected:
+    static ccWidgetIsTapAllowCallback _tapAllowClb;
+
     bool _usingLayoutComponent;
     bool _unifySize;
     bool _enabled;
@@ -838,6 +860,18 @@ protected:
     static Widget *_focusedWidget;  //both layout & widget will be stored in this variable
 
     Ref*       _touchEventListener;
+    #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    #elif _MSC_VER >= 1400 //vs 2005 or higher
+    #pragma warning (push)
+    #pragma warning (disable: 4996)
+    #endif
+    SEL_TouchEvent    _touchEventSelector;
+    #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
+    #pragma GCC diagnostic warning "-Wdeprecated-declarations"
+    #elif _MSC_VER >= 1400 //vs 2005 or higher
+    #pragma warning (pop)
+    #endif
     ccWidgetTouchCallback _touchEventCallback;
     ccWidgetClickCallback _clickEventListener;
     ccWidgetEventCallback _ccEventCallback;
