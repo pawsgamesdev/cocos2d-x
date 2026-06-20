@@ -52,6 +52,7 @@ protected:
     Timer();
 public:
     void setupTimerWithInterval(float seconds, unsigned int repeat, float delay);
+	void reuse() { _aborted = false; }
     void setAborted() { _aborted = true; }
     bool isAborted() const { return _aborted; }
     bool isExhausted() const;

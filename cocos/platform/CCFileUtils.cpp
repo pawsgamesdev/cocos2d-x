@@ -1081,6 +1081,14 @@ void FileUtils::addSearchPath(const std::string &searchpath,const bool front)
         path += "/";
     }
 
+	auto itr = std::find(_originalSearchPaths.begin(), _originalSearchPaths.end(), searchpath);
+	if (itr != _originalSearchPaths.end())
+		_originalSearchPaths.erase(itr);
+
+	itr = std::find(_searchPathArray.begin(), _searchPathArray.end(), path);
+	if (itr != _searchPathArray.end())
+		_searchPathArray.erase(itr);
+
     if (front) {
         _originalSearchPaths.insert(_originalSearchPaths.begin(), searchpath);
         _searchPathArray.insert(_searchPathArray.begin(), path);
@@ -1127,7 +1135,7 @@ std::string FileUtils::getFullPathForFilenameWithinDirectory(const std::string& 
     }
     ret += filename;
     // if the file doesn't exist, return an empty string
-    if (!isFileExistInternal(ret)) {
+    if (!isFileExistInternal(ret) && !isDirectoryExistInternal(ret)) {
         ret = "";
     }
     return ret;

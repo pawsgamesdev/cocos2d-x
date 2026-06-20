@@ -109,7 +109,7 @@ void Timer::update(float dt)
     // deal with delay
     if (_useDelay)
     {
-        if (_elapsed < _delay)
+        if (_elapsed < 0.f || _elapsed < _delay)
         {
             return;
         }
@@ -308,6 +308,17 @@ void Scheduler::schedule(const ccSchedulerFunc& callback, void *target, float in
         CCASSERT(element->paused == paused, "element's paused should be paused!");
     }
 
+	if (_currentTarget == element && _currentTargetSalvaged)
+	{
+		element->currentTimer->setupTimerWithInterval(interval, repeat, delay);
+		//ccArrayAppendObject(element->timers, element->currentTimer);
+		//element->currentTimer->release();
+        element->currentTimer->reuse();
+		_currentTargetSalvaged = false;
+		log("----------------------- Restore scheduler!!!");
+		//return;
+	}
+
     if (element->timers == nullptr)
     {
         element->timers = ccArrayNew(10);
@@ -481,7 +492,7 @@ void Scheduler::schedulePerFrame(const ccSchedulerFunc& callback, void *target, 
         else
         {
             // don't add it again
-            CCLOG("warning: don't update it again");
+            //CCLOG("warning: don't update it again");
             return;
         }
     }
@@ -975,6 +986,17 @@ void Scheduler::schedule(SEL_SCHEDULE selector, Ref *target, float interval, uns
         CCASSERT(element->paused == paused, "element's paused should be paused.");
     }
     
+	if (_currentTarget == element && _currentTargetSalvaged)
+	{
+		element->currentTimer->setupTimerWithInterval(interval, repeat, delay);
+		//ccArrayAppendObject(element->timers, element->currentTimer);
+		//element->currentTimer->release();
+        element->currentTimer->reuse();
+		_currentTargetSalvaged = false;
+		log("----------------------- Restore scheduler!!!");
+		//return;
+	}
+
     if (element->timers == nullptr)
     {
         element->timers = ccArrayNew(10);
