@@ -32,6 +32,7 @@
 
 #import "base/CCDirector.h"
 #import "platform/ios/CCEAGLView-ios.h"
+#import <AppTrackingTransparency/AppTrackingTransparency.h>
 
 static id s_sharedDirectorCaller;
 
@@ -93,6 +94,10 @@ static id s_sharedDirectorCaller;
     [self initLastDisplayTime];
 
     isAppActive = YES;
+    
+    [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+      NSLog(@"Status: %lu", (unsigned long)status);
+    }];
 }
 
 - (void)appDidBecomeInactive
