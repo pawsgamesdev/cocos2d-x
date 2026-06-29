@@ -110,7 +110,7 @@ void ProgramGL::compileProgram()
     auto vertShader = _vertexShaderModule->getShader();
     auto fragShader = _fragmentShaderModule->getShader();
     
-    //assert (vertShader != 0 && fragShader != 0);//TODO: suppress assert
+    assert (vertShader != 0 && fragShader != 0); //TODO: suppress assert
     if (vertShader == 0 || fragShader == 0) {
         CCLOG("cocos2d: %s :error compiling shaders", __FUNCTION__);
         return;
