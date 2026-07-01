@@ -178,7 +178,15 @@ protected:
     cocos2d::Vector<cocos2d::Node*> _callbackHandlers;
     
     std::string _csBuildID;
-    
+
+    // Binary data cache: avoids repeated APK/filesystem I/O when the same .csb template is
+    // loaded multiple times (e.g. 50 PlayerEarnWidget instances from the same template file).
+    // getDataFromFile() re-opens and decompresses from the APK zip on every call — caching
+    // the raw buffer cuts the per-call I/O overhead after the first load.
+    static constexpr int kFileDataCacheMaxSize = 10;
+    std::unordered_map<std::string, cocos2d::Data> _fileDataCache;
+    std::deque<std::string> _fileDataCacheOrder;
+
 };
 
 NS_CC_END

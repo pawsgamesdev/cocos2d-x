@@ -962,19 +962,35 @@ Node* CSLoader::nodeWithFlatBuffersFile(const std::string &fileName)
 Node* CSLoader::nodeWithFlatBuffersFile(const std::string &fileName, const ccNodeLoadCallback &callback)
 {
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
-    
+
     CC_ASSERT(FileUtils::getInstance()->isFileExist(fullPath));
-    
-    Data buf = FileUtils::getInstance()->getDataFromFile(fullPath);
 
-    if (buf.isNull())
+    // Binary data cache: getDataFromFile() decompresses on every call (Leaderboard issue).
+    // For widgets that are created many times from the same template (e.g. 50 leaderboard
+    // entries), this adds up to seconds of I/O. Cache the raw buffer so only the first
+    // call hits the filesystem; subsequent calls parse directly from the in-memory buffer.
+    auto cacheIt = _fileDataCache.find(fullPath);
+    if (cacheIt == _fileDataCache.end())
     {
-        CCLOG("CSLoader::nodeWithFlatBuffersFile - failed read file: %s", fileName.c_str());
-        CC_ASSERT(false);
-        return nullptr;
+        Data buf = FileUtils::getInstance()->getDataFromFile(fullPath);
+        if (buf.isNull())
+        {
+            CCLOG("CSLoader::nodeWithFlatBuffersFile - failed read file: %s", fileName.c_str());
+            CC_ASSERT(false);
+            return nullptr;
+        }
+        if ((int)_fileDataCache.size() >= kFileDataCacheMaxSize)
+        {
+            _fileDataCache.erase(_fileDataCacheOrder.front());
+            _fileDataCacheOrder.pop_front();
+        }
+        auto inserted = _fileDataCache.emplace(fullPath, std::move(buf));
+        _fileDataCacheOrder.push_back(fullPath);
+        cacheIt = inserted.first;
     }
+    const Data& cachedBuf = cacheIt->second;
 
-    auto csparsebinary = GetCSParseBinary(buf.getBytes());
+    auto csparsebinary = GetCSParseBinary(cachedBuf.getBytes());
     
     
     auto csBuildId = csparsebinary->version();
