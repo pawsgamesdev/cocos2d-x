@@ -271,7 +271,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dictionary, Textu
         // add sprite frame
         _spriteFramesCache.insertFrame(plist, spriteFrameName, spriteFrame);
     }
-    _spriteFramesCache.markPlistFull(plist, true);
+    //_spriteFramesCache.markPlistFull(plist, true);
     CC_SAFE_DELETE(image);
 }
 
@@ -329,7 +329,7 @@ void SpriteFrameCache::addSpriteFramesWithDictionary(ValueMap& dict, const std::
 
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, Texture2D *texture)
 {
-    if (_spriteFramesCache.isPlistUsed(plist))
+    if (_spriteFramesCache.hasPlist(plist))
     {
         return; // We already added it
     }
@@ -349,7 +349,7 @@ void SpriteFrameCache::addSpriteFramesWithFileContent(const std::string& plist_c
 void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist, const std::string& textureFileName)
 {
     CCASSERT(textureFileName.size()>0, "texture name should not be null");
-    if (_spriteFramesCache.isPlistUsed(plist))
+    if (_spriteFramesCache.hasPlist(plist))
     {
         return; // We already added it
     }
@@ -362,7 +362,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
 {
     CCASSERT(!plist.empty(), "plist filename should not be nullptr");
     
-    if (_spriteFramesCache.isPlistUsed(plist))
+    if (_spriteFramesCache.hasPlist(plist))
         return;
 
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(plist);
@@ -411,7 +411,7 @@ void SpriteFrameCache::addSpriteFramesWithFile(const std::string& plist)
 
 bool SpriteFrameCache::isSpriteFramesWithFileLoaded(const std::string& plist) const
 {
-    return _spriteFramesCache.isPlistUsed(plist) && _spriteFramesCache.isPlistFull(plist);
+    return _spriteFramesCache.hasPlist(plist);
 }
 
 void SpriteFrameCache::addSpriteFrame(SpriteFrame* frame, const std::string& frameName)
@@ -668,7 +668,7 @@ bool SpriteFrameCache::reloadTexture(const std::string& plist)
 {
     CCASSERT(plist.size()>0, "plist filename should not be nullptr");
 
-    if (_spriteFramesCache.isPlistUsed(plist)) {
+    if (_spriteFramesCache.hasPlist(plist)) {
         _spriteFramesCache.erasePlistIndex(plist);
     }
     else
@@ -734,6 +734,13 @@ void SpriteFrameCache::PlistFramesCache::insertFrame(const std::string &plist, c
     _indexFrame2plist[frame] = plist;           //insert index frameName->plist
 }
 
+bool SpriteFrameCache::PlistFramesCache::isPlistUsed(const std::string &plist) const
+{
+    //plist loaded && not empty
+    auto it = _indexPlist2Frames.find(plist);
+    return it != _indexPlist2Frames.end() && !it->second.empty();
+}
+
 bool SpriteFrameCache::PlistFramesCache::eraseFrame(const std::string &frame)
 {
     _spriteFrames.erase(frame);                             //drop SpriteFrame
@@ -741,7 +748,6 @@ bool SpriteFrameCache::PlistFramesCache::eraseFrame(const std::string &frame)
     if (itFrame != _indexFrame2plist.end())
     {
         auto plist = itFrame->second;
-        markPlistFull(plist, false);
         _indexPlist2Frames[plist].erase(frame);             //update index plist->[frameNames]
         _indexFrame2plist.erase(itFrame);                   //update index frame->plist
         // erase plist index if all frames was erased
@@ -761,8 +767,6 @@ bool SpriteFrameCache::PlistFramesCache::eraseFrames(const std::vector<std::stri
     {
         ret |= eraseFrame(frame);
     }
-    _indexPlist2Frames.clear();
-    _indexFrame2plist.clear();
     return ret;
 }
 
@@ -779,7 +783,6 @@ bool SpriteFrameCache::PlistFramesCache::erasePlistIndex(const std::string &plis
         _indexFrame2plist.erase(f);                             //erase plist frame frameName->plist
     }
     _indexPlist2Frames.erase(plist);                            //update index plist->[frameNames]
-    _isPlistFull.erase(plist);                                  //erase full status
     return true;
 }
 
@@ -788,7 +791,6 @@ void SpriteFrameCache::PlistFramesCache::clear()
     _indexPlist2Frames.clear();
     _indexFrame2plist.clear();
     _spriteFrames.clear();
-    _isPlistFull.clear();
 }
 
 bool SpriteFrameCache::PlistFramesCache::hasFrame(const std::string &frame) const
@@ -796,11 +798,10 @@ bool SpriteFrameCache::PlistFramesCache::hasFrame(const std::string &frame) cons
     return _indexFrame2plist.find(frame) != _indexFrame2plist.end();
 }
 
-bool SpriteFrameCache::PlistFramesCache::isPlistUsed(const std::string &plist) const
+bool SpriteFrameCache::PlistFramesCache::hasPlist(const std::string &plist) const
 {
-    auto frames = _indexPlist2Frames.find(plist);
-    return frames != _indexPlist2Frames.end() && frames->second.size() > 0;
-} 
+    return _indexPlist2Frames.find(plist) != _indexPlist2Frames.end();
+}
 
 SpriteFrame * SpriteFrameCache::PlistFramesCache::at(const std::string &frame)
 {
