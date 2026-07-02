@@ -328,6 +328,8 @@ namespace cocostudio
         auto imageFileNameDic = options->fileNameData();
         int imageFileNameType = imageFileNameDic->resourceType();
         std::string imageFileName = imageFileNameDic->path()->c_str();
+        if (_isNeedToReSkin())
+            imageFileName = _reskinPath(imageFileName, imageFileNameType);
         switch (imageFileNameType)
         {
             case 0:
@@ -352,6 +354,8 @@ namespace cocostudio
             case 1:
             {
                 std::string plist = imageFileNameDic->plistFile()->c_str();
+                if (_isNeedToReSkin())
+                    plist = _reskinPath(plist, imageFileNameType);
                 SpriteFrame* spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(imageFileName);
                 if (spriteFrame)
                 {

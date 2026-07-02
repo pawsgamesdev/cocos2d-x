@@ -195,12 +195,14 @@ void CSLoader::destroyInstance()
 void CSLoader::setBasicSkin(std::string const& skin)
 {
     SpriteReader::getInstance()->setBasicSkin(skin);
+    ImageViewReader::getInstance()->setBasicSkin(skin);
     ButtonReader::getInstance()->setBasicSkin(skin);
 }
 
 void CSLoader::setActiveSkin(std::string const& skin)
 {
     SpriteReader::getInstance()->setActiveSkin(skin);
+    ImageViewReader::getInstance()->setActiveSkin(skin);
     ButtonReader::getInstance()->setActiveSkin(skin);
 }
 
