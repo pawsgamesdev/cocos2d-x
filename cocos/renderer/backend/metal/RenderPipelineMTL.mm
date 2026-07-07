@@ -234,13 +234,29 @@ void RenderPipelineMTL::update(const PipelineDescriptor & pipelineDescirptor,
     
     setBlendStateAndFormat(pipelineDescirptor.blendDescriptor, renderPassDescriptor);
     
+    // Guard against nil vertex/fragment functions before attempting pipeline creation.
+    // getMTLFunction() returns nil when the shader name is not found in the Metal library
+    // (e.g. a custom shader .metal file not compiled into the target).
+    if (!_mtlRenderPipelineDescriptor.vertexFunction ||
+        !_mtlRenderPipelineDescriptor.fragmentFunction)
+    {
+        CCLOG("RenderPipelineMTL: vertex or fragment function is nil — skipping pipeline creation (hash=%u)", hash);
+        [_mtlRenderPipelineDescriptor release];
+        return;
+    }
+
     NSError *error = nil;
     _mtlRenderPipelineState = [_mtlDevice newRenderPipelineStateWithDescriptor:_mtlRenderPipelineDescriptor error:&error];
     if (error)
-        NSLog(@"Can not create renderpipeline state: %@", error);
-    
+        CCLOG("RenderPipelineMTL: newRenderPipelineStateWithDescriptor failed (hash=%u): %s",
+              hash, [error.localizedDescription UTF8String]);
+
     [_mtlRenderPipelineDescriptor release];
-    [_mtlRenderPipelineStateCache setObject:_mtlRenderPipelineState forKey:key];
+
+    // IMPORTANT: do not cache nil — [NSMutableDictionary setObject:nil] throws
+    // NSInvalidArgumentException. This happens when pipeline creation fails above.
+    if (_mtlRenderPipelineState)
+        [_mtlRenderPipelineStateCache setObject:_mtlRenderPipelineState forKey:key];
 }
 
 RenderPipelineMTL::~RenderPipelineMTL()

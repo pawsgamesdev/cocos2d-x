@@ -272,7 +272,14 @@ void CommandBufferMTL::setRenderPipeline(RenderPipeline* renderPipeline)
     CC_SAFE_RETAIN(renderPipeline);
     CC_SAFE_RELEASE(_renderPipelineMTL);
     _renderPipelineMTL = static_cast<RenderPipelineMTL*>(renderPipeline);
-    [_mtlRenderEncoder setRenderPipelineState:_renderPipelineMTL->getMTLRenderPipelineState()];
+    // Guard against nil pipeline state: this happens when RenderPipelineMTL::update()
+    // failed to create the MTLRenderPipelineState (e.g. missing vertex descriptor).
+    // Passing nil to setRenderPipelineState: triggers a Metal validation assertion.
+    id<MTLRenderPipelineState> pipelineState = _renderPipelineMTL->getMTLRenderPipelineState();
+    if (pipelineState)
+        [_mtlRenderEncoder setRenderPipelineState:pipelineState];
+    else
+        CCLOG("CommandBufferMTL: skipping draw — render pipeline state is nil");
 }
 
 void CommandBufferMTL::setViewport(int x, int y, unsigned int w, unsigned int h)
