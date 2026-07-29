@@ -358,6 +358,13 @@ void ProgramState::setVertexUniform(int location, const void* data, std::size_t 
         memcpy(_vertexUniformBuffer + location, data, size);
     }
 #else
+    // Guard against stale UniformLocation from a different shader program being
+    // applied to this ProgramState (e.g. after a shader swap with no unschedule).
+    if (offset + size > _vertexUniformBufferSize)
+    {
+        CCASSERT(false, "ProgramState::setVertexUniform: offset+size out of bounds — stale UniformLocation?");
+        return;
+    }
     memcpy(_vertexUniformBuffer + offset, data, size);
 #endif
 }
