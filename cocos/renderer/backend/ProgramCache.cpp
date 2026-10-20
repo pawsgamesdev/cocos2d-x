@@ -88,10 +88,10 @@ void ProgramCache::destroyInstance()
 
 ProgramCache::~ProgramCache()
 {
-    for(auto& program : _cachedPrograms)
-    {
-        CC_SAFE_RELEASE(program.second);
-    }
+    // Static maps must be cleared too, otherwise a re-created ProgramCache
+    // (e.g. after game restart on language change) would hand out dangling
+    // pointers: addProgram() uses emplace(), which keeps stale entries.
+    removeAllPrograms();
     CCLOGINFO("deallocing ProgramCache: %p", this);
     ShaderCache::destroyInstance();
 }
