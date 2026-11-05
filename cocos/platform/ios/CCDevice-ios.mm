@@ -31,6 +31,7 @@
 #include "base/CCEventAcceleration.h"
 #include "base/CCDirector.h"
 #include "platform/apple/CCDevice-apple.h"
+#include "platform/ios/CCUIWindow-ios.h"
 
 // Accelerometer
 #if !defined(CC_TARGET_OS_TVOS)
@@ -244,7 +245,7 @@ static CCAccelerometerDispatcher* s_pAccelerometerDispatcher;
     UIInterfaceOrientation orientation;
     if (@available(iOS 13.0, *))
     {
-        orientation = [[[UIApplication sharedApplication].windows[0] windowScene] interfaceOrientation];
+        orientation = [CCGetActiveWindowScene() interfaceOrientation];
     }
     else
     {

@@ -32,6 +32,7 @@
 #include "base/CCDirector.h"
 #include "platform/CCGLView.h"
 #include "platform/ios/CCEAGLView-ios.h"
+#include "platform/ios/CCUIWindow-ios.h"
 #include "platform/CCFileUtils.h"
 
 @interface UIWebViewWrapper : NSObject
@@ -292,8 +293,7 @@
                                                           completionHandler();
                                                       }]];
 
-    auto rootViewController = [UIApplication sharedApplication].windows[0].rootViewController;
-    [rootViewController presentViewController:alertController animated:YES completion:^{}];
+    [CCGetTopViewController() presentViewController:alertController animated:YES completion:^{}];
 }
 
 @end

@@ -30,6 +30,7 @@
 
 #import <UIKit/UIAlertController.h>
 #import <UIKit/UIWindow.h>
+#include "platform/ios/CCUIWindow-ios.h"
 #include "base/CCDirector.h"
 #include "base/CCConsole.h"
 
@@ -52,8 +53,7 @@ void ccMessageBox(const char * msg, const char * title)
                                    handler:^(UIAlertAction * action) {}];
 
     [alertController addAction:defaultAction];
-    auto rootViewController = [UIApplication sharedApplication].windows[0].rootViewController;
-    [rootViewController presentViewController:alertController animated:YES completion:nil];
+    [CCGetTopViewController() presentViewController:alertController animated:YES completion:nil];
 #endif
 
 }
